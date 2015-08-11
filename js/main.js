@@ -136,6 +136,8 @@ function toggleMono() {
 }
 
 function gotStream(stream) {
+   alert(stream)
+
     inputPoint = audioContext.createGain();
 
     // Create an AudioNode from the stream.
