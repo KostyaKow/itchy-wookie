@@ -13,6 +13,8 @@
    limitations under the License.
 */
 
+var streamToServer = null;
+
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
 var audioContext = new AudioContext();
@@ -83,7 +85,10 @@ function cancelAnalyserUpdates() {
     rafID = null;
 }
 
+//kk this gets called periodically
 function updateAnalysers(time) {
+   //console.log(time)
+
     if (!analyserContext) {
         var canvas = document.getElementById("analyser");
         canvasWidth = canvas.width;
@@ -98,7 +103,12 @@ function updateAnalysers(time) {
         var numBars = Math.round(canvasWidth / SPACING);
         var freqByteData = new Uint8Array(analyserNode.frequencyBinCount);
 
-        analyserNode.getByteFrequencyData(freqByteData);
+        analyserNode.getByteFrequencyData(freqByteData); //kk
+
+        //console.log(freqByteData)
+        if (streamToServer) {
+            streamToServer.write('hello'); //freqByteData);
+        }
 
         analyserContext.clearRect(0, 0, canvasWidth, canvasHeight);
         analyserContext.fillStyle = '#F6D565';
@@ -136,7 +146,6 @@ function toggleMono() {
 }
 
 function gotStream(stream) {
-   alert(stream)
 
     inputPoint = audioContext.createGain();
 
@@ -158,6 +167,11 @@ function gotStream(stream) {
     inputPoint.connect( zeroGain );
     zeroGain.connect( audioContext.destination );
     updateAnalysers();
+
+    var client = BinaryClient('ws://104.200.17.165:9000'); //kk
+    client.on('open', function(stream){
+      streamToServer = client.createStream({file: 'hello.txt'});
+    });
 }
 
 function initAudio() {
