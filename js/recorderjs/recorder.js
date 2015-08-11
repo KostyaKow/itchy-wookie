@@ -60,17 +60,9 @@ DEALINGS IN THE SOFTWARE.
       }
     }
 
-    this.record = function(){
-      recording = true;
-    }
-
-    this.stop = function(){
-      recording = false;
-    }
-
-    this.clear = function(){
-      worker.postMessage({ command: 'clear' });
-    }
+    this.record = function(){ recording = true; }
+    this.stop = function() { recording = false; }
+    this.clear = function(){ worker.postMessage({ command: 'clear' }); }
 
     this.getBuffers = function(cb) {
       currCallback = cb || config.callback;
